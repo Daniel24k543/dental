@@ -1,4 +1,4 @@
-# Alba Dental — guía para subir a Vercel
+# Tu Clínica Dental — guía para subir a Vercel
 
 Sitio estático (sin build). Carpeta raíz del proyecto: esta misma.
 
@@ -12,6 +12,17 @@ Todo lo siguiente es de relleno y **debe reemplazarse por datos reales**; si no,
 | Precios «Desde S/ …» | `index.html` y páginas de servicio |
 | Cifras de confianza (12 años, 8,500+, 4.9/5) | sección de portada de `index.html` |
 | Opiniones de pacientes | sección Opiniones de `index.html` (usa opiniones reales, con permiso) |
+
+## Personalizar para un cliente (recomendado)
+```
+python personalizar.py "Clínica Sonrisa Norte" --telefono "+51 987 654 321" --direccion "Av. Primavera 456" --distrito "Surco" --ciudad "Lima" --zonas "Surco, San Borja, La Molina" --dominio https://www.sonrisanorte.pe
+```
+Solo el nombre es obligatorio. Cambia nombre, teléfono y WhatsApp, dirección, distrito, ciudad, zonas y dominio en todo el sitio
+(principal, 6 páginas de servicio, sitemap, robots, datos de Google e imagen para compartir). Se puede repetir las veces que quieras.
+Si cambias la ciudad, renombra las carpetas de servicio (`…-lima` → `…-<ciudad>`).
+Requiere Python 3 y, para regenerar la imagen para compartir, `pip install pillow`.
+
+**Revisa a mano después:** precios, cifras de la portada, opiniones, coordenadas (`geo` en `index.html`) y horarios.
 
 ## 2. Pon tu dominio
 ```

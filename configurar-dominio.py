@@ -5,7 +5,7 @@ Luego vuelve a subir a Vercel.
 """
 import sys, pathlib
 
-VIEJO = "https://alba-dental.vercel.app"
+VIEJO = "https://dent-sage.vercel.app"
 if len(sys.argv) != 2 or not sys.argv[1].startswith("http"):
     sys.exit("Uso: python configurar-dominio.py https://www.midominio.com")
 nuevo = sys.argv[1].rstrip("/")

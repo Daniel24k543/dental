@@ -1,6 +1,6 @@
 # PROMPT — Sitio 3D interactivo para clínica odontológica
 
-Construye UN solo archivo `index.html` (HTML + CSS + JS inline) para **Alba Dental**, una clínica odontológica de Lima. Debe ser una experiencia 3D con scroll narrativo, no una plantilla genérica.
+Construye UN solo archivo `index.html` (HTML + CSS + JS inline) para **Tu Clínica Dental**, una clínica odontológica de Lima. Debe ser una experiencia 3D con scroll narrativo, no una plantilla genérica.
 
 ====================================================================
 1. RECURSOS

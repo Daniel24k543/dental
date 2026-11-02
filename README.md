@@ -1,4 +1,4 @@
-# Alba Dental — demo de sitio 3D para clínica odontológica
+# Tu Clínica Dental — demo de sitio 3D para clínica odontológica
 
 Demo estático (HTML + Three.js + GSAP) con un diente 3D interactivo, simulador de tratamientos,
 páginas por servicio y SEO listo. Los datos (nombre, teléfono, precios, opiniones) son de ejemplo.

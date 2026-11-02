@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://alba-dental.vercel.app/sitemap.xml
+Sitemap: https://dent-sage.vercel.app/sitemap.xml
