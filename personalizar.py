@@ -17,13 +17,14 @@ Lo que NO cambia solo (revísalo a mano): precios, cifras de la portada (años, 
 valoración), opiniones, coordenadas del mapa (`geo` en index.html) y horarios.
 """
 import argparse, json, os, re, shutil, sys, unicodedata
+from urllib.parse import quote, quote_plus
 from pathlib import Path
 
 RAIZ = Path(__file__).parent
 CFG = RAIZ / "personalizar.config.json"
 DEFECTO = {"nombre": "Tu Clínica Dental", "telefono": "+51 999 999 999", "digitos": "51999999999",
            "direccion": "Av. Ejemplo 123", "distrito": "Miraflores", "ciudad": "Lima",
-           "dominio": "https://dent-sage.vercel.app",
+           "dominio": "https://dent-sage.vercel.app", "vendedor": "51000000000", "color": "#14b8a6",
            "zonas": ["Miraflores", "San Isidro", "Surquillo", "Barranco", "San Borja", "Santiago de Surco", "Jesús María", "Magdalena"]}
 
 
@@ -96,6 +97,9 @@ def main():
     ap.add_argument("--distrito", help="Distrito principal, p. ej. Surco")
     ap.add_argument("--ciudad", help="Ciudad, p. ej. Lima")
     ap.add_argument("--zonas", help='Distritos o zonas que atiendes, separados por coma, p. ej. "Cayma, Yanahuara, Cerro Colorado"')
+    ap.add_argument("--vendedor", help='Tu WhatsApp para el botón "Quiero esta página" del demo, p. ej. "+51 900 000 000"')
+    ap.add_argument("--color", help="Color principal en hex, p. ej. #2563eb")
+    ap.add_argument("--quitar-demo", action="store_true", help="Quita la etiqueta DEMO, el botón Quiero esta página y la sección Así se vería, y permite que Google indexe la página")
     ap.add_argument("--dominio", help="Dirección final, p. ej. https://www.sonrisanorte.pe")
     a = ap.parse_args()
 
@@ -113,6 +117,12 @@ def main():
     if a.distrito: nuevo["distrito"] = a.distrito.strip()
     if a.ciudad: nuevo["ciudad"] = a.ciudad.strip()
     if a.zonas: nuevo["zonas"] = [z.strip() for z in a.zonas.split(",") if z.strip()]
+    if a.vendedor:
+        v = re.sub(r"\D", "", a.vendedor)
+        nuevo["vendedor"] = ("51" + v) if len(v) == 9 else v
+    if a.color:
+        if not re.fullmatch(r"#[0-9a-fA-F]{6}", a.color): sys.exit("El color debe ser hex de 6 dígitos, p. ej. #2563eb")
+        nuevo["color"] = a.color.lower()
     if a.dominio: nuevo["dominio"] = a.dominio.strip().rstrip("/")
 
     # 1) renombrar carpetas de servicio si cambia la ciudad (…-lima → …-<ciudad>)
@@ -154,7 +164,28 @@ def main():
               (f'"name": "{cfg["ciudad"]}"', f'"name": "{nuevo["ciudad"]}"'),
               (f'en {cfg["ciudad"]}', f'en {nuevo["ciudad"]}'),
               (f'de {cfg["ciudad"]}', f'de {nuevo["ciudad"]}')]
+    pares += [("wa.me/" + cfg["vendedor"], "wa.me/" + nuevo["vendedor"])]
+    for k in ("nombre", "direccion", "distrito", "ciudad"):
+        if cfg[k] != nuevo[k]:
+            pares += [(quote_plus(cfg[k]), quote_plus(nuevo[k])), (quote(cfg[k]), quote(nuevo[k]))]
     n = reemplazar_todo(pares)
+    if nuevo["color"] != cfg["color"]:
+        lum = lambda h: 0.299 * int(h[1:3], 16) + 0.587 * int(h[3:5], 16) + 0.114 * int(h[5:7], 16)
+        texto = "#032a26" if lum(nuevo["color"]) > 150 else "#ffffff"
+        for f in (RAIZ / "index.html", RAIZ / "assets" / "servicio.css"):
+            if f.exists():
+                x = f.read_text(encoding="utf8")
+                x = x.replace("--teal:" + cfg["color"] + ";", "--teal:" + nuevo["color"] + ";")
+                x = re.sub(r"(--on-teal:)#[0-9a-fA-F]{6}", r"\g<1>" + texto, x)
+                f.write_text(x, encoding="utf8", newline="\n")
+    if a.quitar_demo:
+        for f in archivos_sitio():
+            x = f.read_text(encoding="utf8")
+            x2 = re.sub(r"[ \t]*<!-- DEMO:INICIO -->.*?<!-- DEMO:FIN -->\n?", "", x, flags=re.S)
+            x2 = x2.replace('<meta name="robots" content="noindex,follow">', '<meta name="robots" content="index,follow,max-image-preview:large">')
+            if x2 != x:
+                f.write_text(x2, encoding="utf8", newline="\n")
+        print("  Demo quitado: la página ya es indexable por Google.")
     hacer_og(nuevo["nombre"], nuevo["distrito"], nuevo["ciudad"])
     CFG.write_text(json.dumps(nuevo, ensure_ascii=False, indent=2) + "\n", encoding="utf8")
     print(f"Listo: {n} archivos actualizados para «{nuevo['nombre']}».")

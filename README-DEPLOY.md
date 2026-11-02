@@ -22,6 +22,13 @@ Solo el nombre es obligatorio. Cambia nombre, teléfono y WhatsApp, dirección, 
 Si cambias la ciudad, renombra las carpetas de servicio (`…-lima` → `…-<ciudad>`).
 Requiere Python 3 y, para regenerar la imagen para compartir, `pip install pillow`.
 
+Opciones extra:
+- `--vendedor "+51 900 000 000"` → **tu** WhatsApp para el botón «Quiero esta página» del demo (los botones de WhatsApp de la clínica usan `--telefono`).
+- `--color "#2563eb"` → color principal de toda la página.
+- `--quitar-demo` → quita la etiqueta DEMO, el botón «Quiero esta página» y la sección «Así se vería con tu marca», y deja que Google indexe la página. **Úsalo en la versión final del cliente.**
+
+El demo sale con `noindex` a propósito (para que Google no indexe datos de ejemplo). Se levanta con `--quitar-demo`.
+
 **Revisa a mano después:** precios, cifras de la portada, opiniones, coordenadas (`geo` en `index.html`) y horarios.
 
 ## 2. Pon tu dominio
