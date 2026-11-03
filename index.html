@@ -227,7 +227,7 @@ footer a{color:inherit}
   .steps::-webkit-scrollbar{display:none}
   .step{position:static;flex:0 0 100%;box-sizing:border-box;opacity:1;transform:none;pointer-events:auto;scroll-snap-align:start;scroll-snap-stop:always;padding-right:6vw}
   .swipe{display:flex}
-  #hero{align-items:center}
+  #hero{min-height:0;align-items:flex-start;padding:112px 5vw 52px}
   .flat{padding:90px 5vw}
   #hero .stats{display:none}
   #hero h1{font-size:2.4rem}
@@ -919,10 +919,16 @@ function applyMode(){
   hots.forEach(h=>h.style.display=(curId==='anatomia'&&tooth.visible)?'block':'none');
   const dark=cur.dataset.dark==='1';document.body.classList.toggle('is-dark',dark);
 }
+const heroCol=document.querySelector('#hero .col'),techCol=document.querySelector('#tech .col');
 function updateSection(force){
   const a=activeSection();
   $('progress').style.transform=`scaleX(${scrollY/(document.body.scrollHeight-innerHeight||1)})`;
   $('nav').classList.toggle('solid',scrollY>40&&!a.dataset.dark&&a.id!=='hero');
+  if(mobile()){ /* el texto que sube se desvanece antes de llegar a la zona del diente */
+    const H=innerHeight,h=heroCol.getBoundingClientRect(),c=techCol.getBoundingClientRect();
+    heroCol.style.opacity=clamp((h.bottom-H*.5)/(H*.1));
+    techCol.style.opacity=clamp((c.top-H*.36)/(H*.12));
+  }
   if(a===cur&&!force)return;
   cur=a;
   const m=mobile(),half=HW();
