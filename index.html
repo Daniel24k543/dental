@@ -227,7 +227,6 @@ footer a{color:inherit}
   .steps::-webkit-scrollbar{display:none}
   .step{position:static;flex:0 0 100%;box-sizing:border-box;opacity:1;transform:none;pointer-events:auto;scroll-snap-align:start;scroll-snap-stop:always;padding-right:6vw}
   .swipe{display:flex}
-  #tech{min-height:0;padding:43svh 5vw 3svh}
   #hero{min-height:0;align-items:flex-start;padding:112px 5vw 52px}
   .flat{padding:90px 5vw}
   #hero .stats{display:none}
@@ -954,7 +953,8 @@ if(reduce){
   document.querySelector('.dots').style.display='none';
   document.querySelector('.swipe').style.display='none';
 }else if(mobile()){
-  // celular: los 3 pasos se deslizan a izquierda y derecha, sin sección fija
+  // celular: la sección queda fija un rato y los 3 pasos se deslizan a izquierda y derecha
+  ScrollTrigger.create({trigger:'#tech',start:'top top',end:'+=60%',pin:true,anticipatePin:1});
   const st=document.querySelector('.steps');
   st.addEventListener('scroll',()=>setStep(Math.max(0,Math.min(2,Math.round(st.scrollLeft/st.clientWidth)))),{passive:true});
 }else{
