@@ -1,0 +1,21 @@
+{
+  "nombre": "Tu Clínica Dental",
+  "telefono": "+51 999 999 999",
+  "digitos": "51999999999",
+  "direccion": "Av. Ejemplo 123",
+  "distrito": "Miraflores",
+  "ciudad": "Lima",
+  "dominio": "https://dent-sage.vercel.app",
+  "vendedor": "51941614879",
+  "color": "#14b8a6",
+  "zonas": [
+    "Miraflores",
+    "San Isidro",
+    "Surquillo",
+    "Barranco",
+    "San Borja",
+    "Santiago de Surco",
+    "Jesús María",
+    "Magdalena"
+  ]
+}
