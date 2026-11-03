@@ -116,6 +116,10 @@ h2{font-size:clamp(2.1rem,4.6vw,3.6rem);margin-bottom:18px}
 .step h2{margin-bottom:12px}
 .step p{color:#aebdca;max-width:46ch;font-size:1.08rem}
 .dots{display:flex;gap:8px;margin-top:26px}
+.swipe{display:none;align-items:center;gap:8px;margin-top:14px;font-size:.85rem;color:#aebdca}
+.swipe svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;animation:nudge 1.8s var(--out) infinite}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){.swipe svg{animation:none}}
 .dots i{height:4px;width:30px;border-radius:4px;background:#ffffff33;transition:width .3s var(--out),background .3s var(--out)}
 .dots i.on{width:64px;background:#5eead4}
 .stepno{font:500 .95rem Manrope;color:#5eead4;margin-bottom:10px;letter-spacing:.1em}
@@ -219,7 +223,11 @@ footer a{color:inherit}
   .bk{grid-template-columns:1fr}
   .f2{grid-template-columns:1fr}
   .tabs{grid-template-columns:1fr 1fr}
-  .steps{min-height:250px}
+  .steps{min-height:0;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;touch-action:pan-x pan-y}
+  .steps::-webkit-scrollbar{display:none}
+  .step{position:static;flex:0 0 100%;box-sizing:border-box;opacity:1;transform:none;pointer-events:auto;scroll-snap-align:start;scroll-snap-stop:always;padding-right:6vw}
+  .swipe{display:flex}
+  #hero{align-items:center}
   .flat{padding:90px 5vw}
   #hero .stats{display:none}
   #hero h1{font-size:2.4rem}
@@ -246,7 +254,9 @@ footer a{color:inherit}
 .no3d .s3d{min-height:0;padding:110px 6vw 60px}
 .no3d #tech{background:var(--night)}
 .no3d .steps{min-height:0}
-.no3d .step{position:static;opacity:1;transform:none;margin-bottom:20px;pointer-events:auto}
+.no3d .steps{display:block;overflow:visible}
+.no3d .step{position:static;flex:none;opacity:1;transform:none;margin-bottom:20px;pointer-events:auto}
+.no3d .swipe{display:none}
 
 /* ---- botón flotante de WhatsApp + etiqueta demo ---- */
 .wa{position:fixed;right:18px;bottom:18px;z-index:70;width:58px;height:58px;border-radius:50%;background:#25d366;color:#fff;display:grid;place-items:center;box-shadow:0 10px 28px #0e223045;text-decoration:none;transition:transform .16s var(--out)}
@@ -379,6 +389,7 @@ footer a{color:inherit}
         <div class="step"><div class="stepno">03 / 03</div><h2>Un plan que <em>puedes ver</em></h2><p>Te mostramos el resultado en pantalla, con tiempos y costo, antes de empezar. Tú decides.</p></div>
       </div>
       <div class="dots"><i class="on"></i><i></i><i></i></div>
+      <div class="swipe">Desliza para ver los pasos<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </div></div>
   </section>
 
@@ -929,13 +940,18 @@ let needUpdate=true;addEventListener('scroll',()=>{needUpdate=true},{passive:tru
 /* paso a paso de "Tecnología" (sección fija) */
 const steps=[...document.querySelectorAll('.step')],dotsEl=[...document.querySelectorAll('.dots i')];
 function setStep(k){if(k===techStep)return;techStep=k;steps.forEach((s,i)=>s.classList.toggle('on',i===k));dotsEl.forEach((d,i)=>d.classList.toggle('on',i===k));applyMode();}
-if(!reduce){
-  ScrollTrigger.create({trigger:'#tech',start:'top top',end:'+=2400',pin:true,onUpdate:s=>setStep(s.progress<.34?0:s.progress<.67?1:2)});
-}else{
+if(reduce){
   // sin pin: los 3 pasos se muestran uno bajo otro
-  document.querySelector('.steps').style.cssText='position:static;min-height:0';
-  steps.forEach(s=>s.style.cssText='position:static;opacity:1;transform:none;margin-bottom:22px');
+  const st=document.querySelector('.steps');st.style.cssText='display:block;overflow:visible;min-height:0';
+  steps.forEach(s=>s.style.cssText='position:static;opacity:1;transform:none;margin-bottom:22px;padding:0');
   document.querySelector('.dots').style.display='none';
+  document.querySelector('.swipe').style.display='none';
+}else if(mobile()){
+  // celular: los 3 pasos se deslizan a izquierda y derecha, sin sección fija
+  const st=document.querySelector('.steps');
+  st.addEventListener('scroll',()=>setStep(Math.max(0,Math.min(2,Math.round(st.scrollLeft/st.clientWidth)))),{passive:true});
+}else{
+  ScrollTrigger.create({trigger:'#tech',start:'top top',end:'+=2400',pin:true,onUpdate:s=>setStep(s.progress<.34?0:s.progress<.67?1:2)});
 }
 ScrollTrigger.addEventListener('refresh',()=>updateSection(true));
 
